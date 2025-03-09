@@ -10,6 +10,8 @@ export default function Todo({ todo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [completed, setCompleted] = useState(todo.completed);
   const [title, setTitle] = useState(todo.title);
+  const [created_at, setCreated_at] = useState(todo.created_at);
+  const [completed_at, setCompleted_at] = useState(todo.completed_at);
 
   const updateTodoMutation = useMutation({
     mutationFn: () =>
@@ -35,6 +37,7 @@ export default function Todo({ todo }) {
     },
   });
 
+  console.log("todo", todo);
   return (
     <div className="w-full flex items-center gap-1">
       <Checkbox
@@ -42,6 +45,9 @@ export default function Todo({ todo }) {
         onChange={(e) => {
           const newCompleted = e.target.checked;
           setCompleted(newCompleted);
+          setCompleted_at(
+            completed_at ? completed_at : new Date().toISOString()
+          );
           updateTodoMutation.mutate();
         }}
       />
@@ -53,11 +59,18 @@ export default function Todo({ todo }) {
           onChange={(e) => setTitle(e.target.value)}
         />
       ) : (
-        <p
-          className={`flex-1 ${completed ? "line-through text-gray-500" : ""}`}
-        >
-          {title}
-        </p>
+        <>
+          <p
+            className={`flex-1 ${
+              completed ? "line-through text-gray-500" : ""
+            }`}
+          >
+            {title}
+          </p>
+          <p className="flex-2">
+            | 생성 시간: {created_at} <br />| 완료 시간: {completed_at}
+          </p>
+        </>
       )}
 
       {isEditing ? (
